@@ -1,0 +1,12 @@
+# Macro file for DOWSER01
+# 
+# To be run preferably in batch, without graphics:
+# % DOWSER01 run2.mac
+#
+# Default kinemtics: 
+# electron 50 MeV in direction (0.,0.,1.)
+# 1000 events
+#
+/DOWSER01/event/setPrintModulo 100
+/run/beamOn 1000
+

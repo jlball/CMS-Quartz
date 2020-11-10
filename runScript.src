@@ -1,0 +1,27 @@
+nohup ./DOWSER01 < vis.MAC 
+cp DOWSER01.root 01.root 
+mv nohup.out 01.out 
+nohup ./DOWSER01 < vis.MAC 
+cp DOWSER01.root 02.root 
+mv nohup.out 02.out 
+nohup ./DOWSER01 < vis.MAC 
+cp DOWSER01.root 03.root 
+mv nohup.out 03.out 
+nohup ./DOWSER01 < vis.MAC 
+cp DOWSER01.root 04.root 
+mv nohup.out 04.out 
+nohup ./DOWSER01 < vis.MAC 
+cp DOWSER01.root 05.root 
+mv nohup.out 05.out 
+nohup ./DOWSER01 < vis.MAC 
+cp DOWSER01.root 06.root 
+mv nohup.out 06.out 
+nohup ./DOWSER01 < vis.MAC 
+cp DOWSER01.root 07.root 
+mv nohup.out 07.out 
+nohup ./DOWSER01 < vis.MAC 
+cp DOWSER01.root 08.root 
+mv nohup.out 08.out 
+nohup ./DOWSER01 < vis.MAC 
+cp DOWSER01.root 09.root 
+mv nohup.out 09.out 
