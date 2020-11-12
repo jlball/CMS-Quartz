@@ -204,7 +204,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4double Al_z = 25.4 *mm;
 
   //Boron-10 Film:
-  G4double Boron_x = 0.0001 *mm;
+  G4double Boron_x = 0.01 *mm;
   G4double Boron_y = 25.4 *mm;
   G4double Boron_z = 25.4 *mm;
 

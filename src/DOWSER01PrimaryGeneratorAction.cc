@@ -182,16 +182,17 @@ void DOWSER01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // begining of energy assigment
   // Force to assign energy = 0.5 MeV
   
-  P0 = G4UniformRand();
-  for (int ii = 0; ii < fnArray; ii++)
-  {
-    if (intSpectrum[ii] >= P0)
-    {
-      Eneutron = nEnergy[ii-1] + (P0 - intSpectrum[ii-1])*(nEnergy[ii] - nEnergy[ii-1])/(intSpectrum[ii] - intSpectrum[ii-1]);
-      break;
-    }
-  }
+  // P0 = G4UniformRand();
+  // for (int ii = 0; ii < fnArray; ii++)
+  // {
+  //   if (intSpectrum[ii] >= P0)
+  //   {
+  //     Eneutron = nEnergy[ii-1] + (P0 - intSpectrum[ii-1])*(nEnergy[ii] - nEnergy[ii-1])/(intSpectrum[ii] - intSpectrum[ii-1]);
+  //     break;
+  //   }
+  // }
   
+  Eneutron = 0.5;
   
   // P0 = G4UniformRand();
   // if (P0 <= 0.8286)
@@ -207,28 +208,30 @@ void DOWSER01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   analysisManager->FillH1(1, std::log10(Eneutron));
   info->SetEnergyN(Eneutron);
   
-  rotationAngle = (G4UniformRand() - 0.5) *3.14159265 * 0.6667; // 1.570796327 rotating angle of beam source
+  rotationAngle = 0; // 1.570796327 rotating angle of beam source
   // rotationAngle = -60*0.017453293;
   // rotationAngle = -0.25 *3.14159265358979323846264338328;
   phi0 = 0.0; // G4UniformRand() *3.14159265358979323846264338328*2.0; // 1.570796327 rotating angle of beam source
   // rotationAngle = 0.5 *3.14159265358979323846264338328*0.5; // 1.570796327 rotating angle of beam source
   // phi0 = 0.*G4UniformRand() *3.14159265358979323846264338328*2.0; // 1.570796327 rotating angle of beam source
-  x0 = (G4UniformRand()-0.5)*10.0; // +5.875;
-  y0 = (G4UniformRand()-0.5)*0.50; // +5.875;
-  z0 = 40.;
+  x0 = 10; // +5.875;
+  y0 = -1.25 + 2.5 * G4UniformRand();
+  z0 = -1.25 + 2.5 * G4UniformRand();
   xx = x0*cos(rotationAngle)*cos(phi0) + z0*cos(phi0)*sin(rotationAngle) -  y0*sin(phi0);
   yy = y0*cos(phi0) + x0*cos(rotationAngle)*sin(phi0) + z0*sin(rotationAngle)*sin(phi0);
   zz = z0*cos(rotationAngle) - x0*sin(rotationAngle) + 0.0;
-  px0 = - cos(phi0)*sin(rotationAngle); // *cos(phi0);
-  py0 = - sin(rotationAngle)*sin(phi0); // py0=-sin(rotationAngle)*sin(phi0);
-  pz0 = - cos(rotationAngle);
-  fParticleGun->SetParticlePosition(G4ThreeVector(xx*cm, y0*cm, zz*cm));
+  px0 = -1; // *cos(phi0);
+  py0 = 0; // py0=-sin(rotationAngle)*sin(phi0);
+  pz0 = 0;
+  fParticleGun->SetParticlePosition(G4ThreeVector(x0*cm, y0*cm, z0*cm));
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px0,py0,pz0));
   info->SetTheta0(rotationAngle*180.0/pi);
   info->SetTheta1(phi0*180.0/pi);
   analysisManager->FillH1(2, rotationAngle*180.0/pi);
   fParticleGun->GeneratePrimaryVertex(anEvent);
   anEvent->SetUserInformation(info);
+
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
