@@ -84,6 +84,7 @@ private:
   G4double x0, y0, z0, x1, y1, z1, nx0, ny0, nx1, ny1, ntheta, theta0, theta1;
   G4String  fParticleName;
   G4String  fParticleNameOld;
+  G4int numOfCapture;
   
   
 };

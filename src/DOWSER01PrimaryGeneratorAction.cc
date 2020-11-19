@@ -192,7 +192,7 @@ void DOWSER01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   //   }
   // }
   
-  Eneutron = 0.5;
+  Eneutron = 0.025;
   
   // P0 = G4UniformRand();
   // if (P0 <= 0.8286)

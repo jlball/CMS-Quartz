@@ -38,6 +38,7 @@
 #include "G4UnitsTable.hh"
 #include "G4CsvAnalysisManager.hh"
 #include "G4PhysicalConstants.hh"
+#include "G4GenericMessenger.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -61,7 +62,7 @@ fEnergy(0.),
 kEnergy(0),
 nEnergy(0),
 theta(0), phi(0),px(0),py(0),pz(0),x0(0), y0(0), z0(0), x1(0), y1(0), z1(0), nx0(0), ny0(0), nx1(0), ny1(0),
-ntheta(0), theta0(0), theta1(0), fParticleName(), fParticleNameOld()
+ntheta(0), theta0(0), theta1(0), fParticleName(), fParticleNameOld(), numOfCapture(0)
 {
     fgInstance = this;
 }
@@ -77,6 +78,7 @@ DOWSER01SteppingAction::~DOWSER01SteppingAction()
 
 void DOWSER01SteppingAction::UserSteppingAction(const G4Step* step)
 {
+    
     // get volume of the current step
     G4int fStepNo;
     G4LogicalVolume* volume = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume()->GetLogicalVolume();
@@ -85,8 +87,10 @@ void DOWSER01SteppingAction::UserSteppingAction(const G4Step* step)
     fStepNo = step->GetTrack()->GetCurrentStepNumber();
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
     // G4CsvAnalysisManager* analysisManager = G4CsvAnalysisManager::Instance();
+
+    //Getting name of the logical volume the step moves through
     G4String nameLogicVolume = volume->GetName();
-  
+
   if (fStepNo == 1)
   {
     G4EventManager* evtMan = G4EventManager::GetEventManager();
@@ -97,28 +101,26 @@ void DOWSER01SteppingAction::UserSteppingAction(const G4Step* step)
       nEnergy = info->GetEnergyN();
     }
 
-    if ((fParticleName == "alpha") && ((nameLogicVolume == "boronFilmLV")))
+    kEnergy = step->GetPreStepPoint()->GetKineticEnergy()/CLHEP::eV;
+
+    //G4cout << "launched " << fParticleName << " w/ energy: " << kEnergy << G4endl;
+    //G4cout << "in logical volume: " << nameLogicVolume << G4endl;
+
+    if ((fParticleName == "Li7") && ((nameLogicVolume == "BoronFilm")))
     {
-      kEnergy = step->GetPreStepPoint()->GetKineticEnergy()/CLHEP::MeV;
-      z0 =step->GetPreStepPoint()->GetPosition().z()/CLHEP::mm;
-      analysisManager->FillH1(3, std::log10(nEnergy));
-      analysisManager->FillH1(4, theta0);
-      analysisManager->FillH1(5, kEnergy);
-      analysisManager->FillH2(3, theta0, std::log10(nEnergy));
-    } else if ((fParticleName == "Li7") && ((nameLogicVolume == "boronFilmLV")))
-    {
-      z0 =step->GetPreStepPoint()->GetPosition().z()/CLHEP::mm;
-      kEnergy = step->GetPreStepPoint()->GetKineticEnergy()/CLHEP::MeV;
-      analysisManager->FillH1(8, kEnergy);
-      analysisManager->FillH1(9, z0);
+      numOfCapture += 1;
+      G4cout << "New B-10 capture event, total is: " << numOfCapture << G4endl;
     }
+
     if ((fParticleName != "alpha") && (fParticleNameOld == "alpha") && (ntheta == 1))
     {
       analysisManager->FillH1(6, z1);
       analysisManager->FillH2(1, z1, x1);
       ntheta = 0;
       fParticleNameOld = fParticleName;
-    } else if ((fParticleName != "Li7") && (fParticleNameOld == "Li7") && (ntheta == 1))
+    } 
+    
+    else if ((fParticleName != "Li7") && (fParticleNameOld == "Li7") && (ntheta == 1))
     {
       analysisManager->FillH1(7, z1);
       analysisManager->FillH2(2, z1, x1);
@@ -155,5 +157,6 @@ void DOWSER01SteppingAction::Reset()
 {
     // G4cout << "neutron energy deposit " << fEnergy << "MeV" << G4endl;
     // fEnergy = 0.;
+    G4cout << "Stepping Action Reset Called" << G4endl;
 }
 
