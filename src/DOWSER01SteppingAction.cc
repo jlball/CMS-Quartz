@@ -90,6 +90,7 @@ void DOWSER01SteppingAction::UserSteppingAction(const G4Step* step)
 
     //Getting name of the logical volume the step moves through
     G4String nameLogicVolume = volume->GetName();
+    
 
   if (fStepNo == 1)
   {
@@ -110,43 +111,58 @@ void DOWSER01SteppingAction::UserSteppingAction(const G4Step* step)
     {
       numOfCapture += 1;
       G4cout << "New B-10 capture event, total is: " << numOfCapture << G4endl;
+
+      theta0 = info->GetTheta0();
+      phi = info->GetTheta1();
+      analysisManager->FillH1(3, theta0);
+      analysisManager->FillH1(4, phi);
     }
 
-    if ((fParticleName != "alpha") && (fParticleNameOld == "alpha") && (ntheta == 1))
+    if (fParticleName == "alpha")
     {
-      analysisManager->FillH1(6, z1);
-      analysisManager->FillH2(1, z1, x1);
-      ntheta = 0;
-      fParticleNameOld = fParticleName;
-    } 
-    
-    else if ((fParticleName != "Li7") && (fParticleNameOld == "Li7") && (ntheta == 1))
-    {
-      analysisManager->FillH1(7, z1);
-      analysisManager->FillH2(2, z1, x1);
-      ntheta = 0;
-      fParticleNameOld = fParticleName;
+      analysisManager->FillH1(1, kEnergy);
     }
-  } else if ((fParticleName == "alpha") || (fParticleName == "Li7"))
+  } 
+
+  if (fParticleName == "alpha" ||  fParticleName == "Li7")
+  {
+    if (fParticleName == "alpha")
+    {
+      //G4cout << "Alpha logical volume: " << nameLogicVolume << G4endl;
+    }
+    if (fParticleName == "Li7")
+    {
+      //G4cout << "Li7 logical volume: " << nameLogicVolume << G4endl;
+    }
+  }  
+
+  if (nameLogicVolume == "AlSubstrate" && fParticleName == "neutron")
+  {
+    G4double stepEnergy = step->GetPostStepPoint()->GetKineticEnergy()/CLHEP::eV;
+    //G4cout << "HDPE nENergy: " << stepEnergy << G4endl;
+    if (stepEnergy != 0)
+    {
+        analysisManager->FillH1(2, stepEnergy);
+    }
+  }
+
+
+  if (fParticleName == "alpha" || fParticleName == "Li7")
   {
     z1 = step->GetPreStepPoint()->GetPosition().z()/CLHEP::mm;
     x1 = step->GetPreStepPoint()->GetPosition().x()/CLHEP::mm;
-    fParticleNameOld = fParticleName;
-    if (nameLogicVolume == "xenonLV")
-    {
-      ntheta = 1;
-    }
+    fParticleNameOld = fParticleName;    
   }
 
   if ((fParticleName == "alpha") && (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) && ((nameLogicVolume == "xenonLV") ))
   {
     kEnergy = step->GetPreStepPoint()->GetKineticEnergy()/CLHEP::MeV;
-    analysisManager->FillH1(9, kEnergy);
+    //analysisManager->FillH1(9, kEnergy);
   }
   if ((fParticleName == "Li7") && (step->GetPreStepPoint()->GetStepStatus() == fGeomBoundary) && ((nameLogicVolume == "xenonLV") ))
   {
     kEnergy = step->GetPreStepPoint()->GetKineticEnergy()/CLHEP::MeV;
-    analysisManager->FillH1(10, kEnergy);
+    //analysisManager->FillH1(10, kEnergy);
   }
 
 }

@@ -111,14 +111,24 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4Isotope* isoB10 = new G4Isotope("isoB10", protons, nucleons, atomicMass);
   G4Element* elmB10 = new G4Element("elmB10", "B10", isotopes = 1);
   elmB10->AddIsotope(isoB10,100*perCent);
-  G4Material* boron10 = new G4Material("boron10", 0.94770*g/cm3, ncomponents=1, kStateSolid);
+  G4Material* boron10 = new G4Material("boron10", 2.34*g/cm3, ncomponents=1, kStateSolid);
   boron10->AddElement(elmB10,100*perCent);
   
+  //Define Xenon gas explicitly to allow for variable pressure:
+  G4Isotope* isoXe = new G4Isotope("isoXe131", 54, 131, 130.905*g/mole);
+  G4Element* elmXe = new G4Element("elmXe", "XeGas", 1);
+  elmXe->AddIsotope(isoXe, 100*perCent);
+
+  G4Material* xenonGas = new G4Material("xenonGas", 0.005894*g/cm3, ncomponents=1, kStateGas, 273*kelvin, 1*atmosphere);
+  xenonGas->AddElement(elmXe, 100*perCent);
+
   nistManager->FindOrBuildMaterial("G4_POLYETHYLENE", fromIsotopes);
   G4Material* polyethylene = G4Material::GetMaterial("G4_POLYETHYLENE");
 
   G4Material* Silicon = nistManager->FindOrBuildMaterial("G4_Si", fromIsotopes);
+  //at STP
   G4Material* Xenon = nistManager->FindOrBuildMaterial("G4_Xe", fromIsotopes);
+  G4cout << "G4_Xenon pressure: " << Xenon->GetPressure() << G4endl;
   // Al for substract, Aluminum
   G4Material* Aluminum = nistManager->FindOrBuildMaterial("G4_Al", fromIsotopes);
 
@@ -130,15 +140,10 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   
   // Cd for SETN container, Cadmium
   G4Material* cadmium = nistManager->FindOrBuildMaterial("G4_Cd", fromIsotopes);
-
-  // Xe
-  // G4Material* xenon = nistManager->FindOrBuildMaterial("G4_Xe", fromIsotopes);
   
   // BC545 Materials
   // Natural Boron-loaded Premium Plastic Scintillator
-  // 5% Boron
-  // composition, # of atoms-> C: 4.43, H: 5.18, 10B: 0.0559
-  //
+  // 5% Boronncomponents=
   G4String symbol;
   G4double a, z, density;
   G4Element* C = new G4Element("Carbon", symbol="C", z=6., a= 12.01*g/mole);
@@ -156,7 +161,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   // Boron Cabride
   // B4C
   G4int natoms;
-  G4Material* B4C = new G4Material("B4C",density = 2.52*g/cm3, ncomponents = 2, kStateSolid);
+  G4Material* B4C = new G4Material("B4C", density = 2.52*g/cm3, ncomponents = 2, kStateSolid);
   B4C->AddElement(C, natoms = 1);
   B4C->AddElement(B10, natoms = 4);
   
@@ -175,7 +180,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4RotationMatrix* rot = new G4RotationMatrix();
   rot->rotateZ(0.*deg);
   
-  G4ThreeVector worldSize = G4ThreeVector(50*cm, 50*cm, 100*cm);
+  G4ThreeVector worldSize = G4ThreeVector(100*cm, 100*cm, 150*cm);
   G4Box * solidWorld
   = new G4Box("soildWorld", worldSize.x()/2., worldSize.y()/2., worldSize.z()/2.);
   G4LogicalVolume * World
@@ -194,56 +199,68 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
 
   //Xenon Gas Dimensions:
-  G4double Xenon_x = 7 *mm;
+  G4double Xenon_x = 25.4 *mm;
   G4double Xenon_y = 25.4 *mm;
-  G4double Xenon_z = 25.4 *mm;
+  G4double Xenon_z = 7 *mm;
 
   //Aluminum Substrate:
-  G4double Al_x = 0.8 *mm;
+  G4double Al_x = 25.4 *mm;
   G4double Al_y = 25.4 *mm;
-  G4double Al_z = 25.4 *mm;
+  G4double Al_z = 0.8 *mm;
 
   //Boron-10 Film:
-  G4double Boron_x = 0.001 *mm;
+  G4double Boron_x = 25.4 *mm;
   G4double Boron_y = 25.4 *mm;
-  G4double Boron_z = 25.4 *mm;
+  G4double Boron_z = 0.001 *mm;
 
   //SiPM:
   G4double SiPM_x = 3*mm; 
   G4double SiPM_y = 1*mm; 
   G4double SiPM_z = 3*mm;
 
+  //HDPE Attachment:
+  G4double HDPE_x1 = Al_x;
+  G4double HDPE_x2 = 0*mm;
+  G4double HDPE_y1 = Al_y;
+  G4double HDPE_y2 = Al_y;
+  G4double HDPE_z = 40*mm;
+
   //SOLIDS:
   G4VSolid* XenonSolid = new G4Box("XenonGas", Xenon_x/ 2, Xenon_y/2, Xenon_z/2);
   G4VSolid* AlSubstrateSolid = new G4Box("AlSubstrate", Al_x/ 2, Al_y/2, Al_z/2);
   G4VSolid* BoronFilmSolid = new G4Box("BoronFilm", Boron_x/ 2, Boron_y/2, Boron_z/2);
-
   G4VSolid* SiPMSolid = new G4Box("SiPM", SiPM_x/2, SiPM_y/2, SiPM_z/2);
+
+  G4VSolid* HDPESolid = new G4Box("HDPE", HDPE_x1/2, HDPE_y1/2, HDPE_z/2);
+  //G4VSolid* HDPESolid = new G4Trd("HDPE", HDPE_x1/2, HDPE_x2/2, HDPE_y1/2, HDPE_y2/2, HDPE_z/2);
 
   //LOGICAL VOLUMES:
   G4LogicalVolume* XenonLogical = new G4LogicalVolume(XenonSolid, Xenon, "XenonGas");
   G4LogicalVolume* AlSubstrateLogical = new G4LogicalVolume(AlSubstrateSolid, Aluminum, "AlSubstrate");
   G4LogicalVolume* BoronFilmLogical = new G4LogicalVolume(BoronFilmSolid, boron10, "BoronFilm");
-
   G4LogicalVolume* SiPMLogical = new G4LogicalVolume(SiPMSolid, Silicon, "SiPM");
+
+  G4LogicalVolume* HDPELogical = new G4LogicalVolume(HDPESolid, polyethylene, "HDPE");
 
   //Place volumes in the world:
   new G4PVPlacement(0, G4ThreeVector(), XenonLogical, "XenonGas", World, false, 0);
-  new G4PVPlacement(0, G4ThreeVector(Xenon_x/2 + Al_x/2, 0, 0), AlSubstrateLogical, "AlSubstrate", World, false, 0);
-  new G4PVPlacement(0, G4ThreeVector(-Xenon_x/2 - Al_x/2, 0, 0), AlSubstrateLogical, "AlSubstrate", World, false, 1);
-  new G4PVPlacement(0, G4ThreeVector(Xenon_x/2 + Al_x + Boron_x/2, 0, 0), BoronFilmLogical, "BoronFilm", World, false, 0);
+  new G4PVPlacement(0, G4ThreeVector(0, 0, Xenon_z/2 + Al_z/2 + Boron_z), AlSubstrateLogical, "AlSubstrate", World, false, 0);
+  new G4PVPlacement(0, G4ThreeVector(0, 0, -Xenon_z/2 - Al_z/2), AlSubstrateLogical, "AlSubstrate", World, false, 1);
+  new G4PVPlacement(0, G4ThreeVector(0, 0, Xenon_z/2 + Boron_z/2), BoronFilmLogical, "BoronFilm", World, false, 0);
 
-  new G4PVPlacement(0, G4ThreeVector(0, Xenon_y/2 + SiPM_y/2, Xenon_z/8), SiPMLogical, "SiPM", XenonLogical, false, 0);
-  new G4PVPlacement(0, G4ThreeVector(0, -Xenon_y/2 - SiPM_y/2, Xenon_z/8), SiPMLogical, "SiPM", XenonLogical, false, 1);
+  new G4PVPlacement(0, G4ThreeVector(Xenon_x/8, Xenon_y/2 + SiPM_y/2, 0), SiPMLogical, "SiPM", XenonLogical, false, 0);
+  new G4PVPlacement(0, G4ThreeVector(Xenon_x/8, -Xenon_y/2 - SiPM_y/2, 0), SiPMLogical, "SiPM", XenonLogical, false, 1);
 
-  new G4PVPlacement(0, G4ThreeVector(0, Xenon_y/2 + SiPM_y/2, Xenon_z/8 + Xenon_z/4), SiPMLogical, "SiPM", XenonLogical, false, 2);
-  new G4PVPlacement(0, G4ThreeVector(0, -Xenon_y/2 - SiPM_y/2, Xenon_z/8 + Xenon_z/4), SiPMLogical, "SiPM", XenonLogical, false, 3);
+  new G4PVPlacement(0, G4ThreeVector(Xenon_x/8 + Xenon_x/4, Xenon_y/2 + SiPM_y/2, 0), SiPMLogical, "SiPM", XenonLogical, false, 2);
+  new G4PVPlacement(0, G4ThreeVector(Xenon_x/8 + Xenon_x/4, -Xenon_y/2 - SiPM_y/2, 0), SiPMLogical, "SiPM", XenonLogical, false, 3);
 
-  new G4PVPlacement(0, G4ThreeVector(0, Xenon_y/2 + SiPM_y/2, -Xenon_z/8), SiPMLogical, "SiPM", XenonLogical, false, 4);
-  new G4PVPlacement(0, G4ThreeVector(0, -Xenon_y/2 - SiPM_y/2, -Xenon_z/8), SiPMLogical, "SiPM", XenonLogical, false, 5);
+  new G4PVPlacement(0, G4ThreeVector(-Xenon_x/8, Xenon_y/2 + SiPM_y/2, 0), SiPMLogical, "SiPM", XenonLogical, false, 4);
+  new G4PVPlacement(0, G4ThreeVector(-Xenon_x/8, -Xenon_y/2 - SiPM_y/2, 0), SiPMLogical, "SiPM", XenonLogical, false, 5);
 
-  new G4PVPlacement(0, G4ThreeVector(0, Xenon_y/2 + SiPM_y/2, -Xenon_z/8 - Xenon_z/4), SiPMLogical, "SiPM", XenonLogical, false, 6);
-  new G4PVPlacement(0, G4ThreeVector(0, -Xenon_y/2 - SiPM_y/2, -Xenon_z/8 - Xenon_z/4), SiPMLogical, "SiPM", XenonLogical, false, 7);
+  new G4PVPlacement(0, G4ThreeVector(-Xenon_x/8 - Xenon_x/4, Xenon_y/2 + SiPM_y/2, 0), SiPMLogical, "SiPM", XenonLogical, false, 6);
+  new G4PVPlacement(0, G4ThreeVector(-Xenon_x/8 - Xenon_x/4, -Xenon_y/2 - SiPM_y/2, 0), SiPMLogical, "SiPM", XenonLogical, false, 7);
+
+  new G4PVPlacement(0, G4ThreeVector(0, 0, Xenon_z/2 + Al_z + Boron_z + HDPE_z/2), HDPELogical, "HDPE", World, false, 0);
 
   //
   // Visualization attributes
@@ -262,6 +279,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   AlSubstrateLogical->SetVisAttributes (blueBoxVisAtt);
   XenonLogical->SetVisAttributes (greenBoxVisAtt);
   SiPMLogical->SetVisAttributes (yellowBoxVisAtt);
+  HDPELogical->SetVisAttributes (whiteBoxVisAtt);
 
   //
   // Always return the physical World

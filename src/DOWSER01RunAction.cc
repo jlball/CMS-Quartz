@@ -73,7 +73,7 @@ void DOWSER01RunAction::BeginOfRunAction(const G4Run* run)
   
   // Open an output file
   //
-  G4String fileName = "DOWSER25DegWedge";
+  G4String fileName = "DOWSER_CMFX_40mm_500mil_2";
   analysisManager->OpenFile(fileName);
   analysisManager->SetFirstHistoId(1);
 
@@ -92,20 +92,23 @@ void DOWSER01RunAction::BeginOfRunAction(const G4Run* run)
   // 1 - energy
   // 2 - emission angle on lunar surface
   // 3 - entry angle at LRO altitude
-  analysisManager->CreateH1("nEnergy","HDPE Neutron Energy Spectrum; Log_{10} E(eV)", 120, -4., 8.);         // h1 1 incident N, E
-  analysisManager->CreateH1("nAngleG","HDPE Incident Neutron Angular Distribition; #theta0", 180, -90, 90);  // h1 2 incident N, theta
-  analysisManager->CreateH1("nDetEnergy1","Detected Neutron Spectrum; Log_{10} E(eV)", 120, -4., 8.);        // h1 3 detected N, E
-  analysisManager->CreateH1("nDetAngleG1","Detected Neutron Angular Distribition; #theta", 180, -90, 90);   // h1 4 detected N, theta
-  analysisManager->CreateH1("alphaEnergyB10","HDPE #alpha Spectrum; E(MeV)", 100,0,4.0);                    // h1 5 detected alpha, E
-  analysisManager->CreateH1("alphaFinPos1","HDPE #alpha Final Position Total, Z (mm)", rangeBin, rangeMin, rangeMax);// h1 6 alpha, final Z
-  analysisManager->CreateH1("li7nergyB10","HDPE Li7 Spectrum; E(MeV)", 100,0,4.0);                         // h1 7 detected Li, E
-  analysisManager->CreateH1("LiFinalPos1","HDPE Li7 Final Position Total, Z (mm)", rangeBin, rangeMin, rangeMax);  // h1 8 Li, final 
-  analysisManager->CreateH1("alphaEnergyXe","HDPE #alpha Spectrum Entering Xe; E(MeV)", 100,0,4.0);    // h1 9 detected alpha, E
-  analysisManager->CreateH1("li7EnergyXe","HDPE Li7 Spectrum Entering Xe; E(MeV)", 100,0,4.0);         // h1 10 detected Li, E
-  analysisManager->CreateH2("alphaFinalPos","HDPE #alpha Final Position in Xe(mm), X-Z", rangeBin, rangeMin, rangeMax, rangeBin, rangeMin, rangeMax);    // h2 1
-  analysisManager->CreateH2("LiFinalPos","HDPE Li7 Final Position in Xe (mm), X-Z", rangeBin, rangeMin, rangeMax, rangeBin, rangeMin, rangeMax);         // h2 2
-  analysisManager->CreateH2("thetaEnergy","Theta-Energy Log_{10} E(eV)", 180, -90, 90, 120, -4., 8.);    // h2 3
-
+  //analysisManager->CreateH1("nEnergy","HDPE Neutron Energy Spectrum; Log_{10} E(eV)", 120, -4., 8.);         // h1 1 incident N, E
+  //analysisManager->CreateH1("nAngleG","HDPE Incident Neutron Angular Distribition; #theta0", 180, -90, 90);  // h1 2 incident N, theta
+  //analysisManager->CreateH1("nDetEnergy1","Detected Neutron Spectrum; Log_{10} E(eV)", 120, -4., 8.);        // h1 3 detected N, E
+  //analysisManager->CreateH1("nDetAngleG1","Detected Neutron Angular Distribition; #theta", 180, -90, 90);   // h1 4 detected N, theta
+  //analysisManager->CreateH1("alphaEnergyB10","HDPE #alpha Spectrum; E(MeV)", 100,0,4.0);                    // h1 5 detected alpha, E
+  //analysisManager->CreateH1("alphaFinPos1","HDPE #alpha Final Position Total, Z (mm)", rangeBin, rangeMin, rangeMax);// h1 6 alpha, final Z
+  // analysisManager->CreateH1("li7nergyB10","HDPE Li7 Spectrum; E(MeV)", 100,0,4.0);                         // h1 7 detected Li, E
+  // analysisManager->CreateH1("LiFinalPos1","HDPE Li7 Final Position Total, Z (mm)", rangeBin, rangeMin, rangeMax);  // h1 8 Li, final 
+  // analysisManager->CreateH1("alphaEnergyXe","HDPE #alpha Spectrum Entering Xe; E(MeV)", 100,0,4.0);    // h1 9 detected alpha, E
+  // analysisManager->CreateH1("li7EnergyXe","HDPE Li7 Spectrum Entering Xe; E(MeV)", 100,0,4.0);         // h1 10 detected Li, E
+  // analysisManager->CreateH2("alphaFinalPos","HDPE #alpha Final Position in Xe(mm), X-Z", rangeBin, rangeMin, rangeMax, rangeBin, rangeMin, rangeMax);    // h2 1
+  // analysisManager->CreateH2("LiFinalPos","HDPE Li7 Final Position in Xe (mm), X-Z", rangeBin, rangeMin, rangeMax, rangeBin, rangeMin, rangeMax);         // h2 2
+  // analysisManager->CreateH2("thetaEnergy","Theta-Energy Log_{10} E(eV)", 180, -90, 90, 120, -4., 8.);    // h2 3
+  analysisManager->CreateH1("alphaEnergy", "Alpha Particle Energy Spectrum in MeV", 10, 1., 2.);
+  analysisManager->CreateH1("nEnergyB10", "Neutron Energy incident on Boron-10 Thin Film, 2cm HDPE", 200, 0., 2);
+  analysisManager->CreateH1("b10rotation", "Boron-10 Count vs. Rotation Angle", 100, 0, 180);
+  analysisManager->CreateH1("b10phi", "Boron-10 Count vs. Phi", 50, -5, 5);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
