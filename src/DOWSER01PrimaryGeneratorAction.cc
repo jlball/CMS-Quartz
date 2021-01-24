@@ -205,8 +205,8 @@ void DOWSER01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   //Randonly generate spherical angle for momentum in specified range
   spread_angle = 3.5 * pi/180;
-  theta = 2*pi*G4UniformRand();
-  phi = -spread_angle + 2*spread_angle*G4UniformRand();
+  theta = 0;//2*pi*G4UniformRand();
+  phi = 0; //-spread_angle + 2*spread_angle*G4UniformRand();
 
   //generate cartesian coordinates for momentum
   px0 = sin(phi)*cos(theta);

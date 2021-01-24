@@ -143,6 +143,7 @@ void DOWSER01SteppingAction::UserSteppingAction(const G4Step* step)
     if (stepEnergy != 0)
     {
         analysisManager->FillH1(2, stepEnergy);
+        analysisManager->FillH2(1, theta0, stepEnergy);
     }
   }
 

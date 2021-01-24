@@ -73,7 +73,7 @@ void DOWSER01RunAction::BeginOfRunAction(const G4Run* run)
   
   // Open an output file
   //
-  G4String fileName = "DOWSER_CMFX_40mm_500mil_2";
+  G4String fileName = "DOWSER_CMFX_Iso_Cadmium_Fixed_No_Spread";
   analysisManager->OpenFile(fileName);
   analysisManager->SetFirstHistoId(1);
 
@@ -107,8 +107,9 @@ void DOWSER01RunAction::BeginOfRunAction(const G4Run* run)
   // analysisManager->CreateH2("thetaEnergy","Theta-Energy Log_{10} E(eV)", 180, -90, 90, 120, -4., 8.);    // h2 3
   analysisManager->CreateH1("alphaEnergy", "Alpha Particle Energy Spectrum in MeV", 10, 1., 2.);
   analysisManager->CreateH1("nEnergyB10", "Neutron Energy incident on Boron-10 Thin Film, 2cm HDPE", 200, 0., 2);
-  analysisManager->CreateH1("b10rotation", "Boron-10 Count vs. Rotation Angle", 100, 0, 180);
+  analysisManager->CreateH1("b10rotation", "Boron-10 Count vs. Rotation Angle", 25, 0, 180);
   analysisManager->CreateH1("b10phi", "Boron-10 Count vs. Phi", 50, -5, 5);
+  analysisManager->CreateH2("nEnergyB10rotation", "Incoming Neutron Energy Spectrum on Boron-10 as a function of rotationAngle", 25, 0, 180, 100, 0, 1);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

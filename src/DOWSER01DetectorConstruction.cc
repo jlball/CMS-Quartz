@@ -55,6 +55,8 @@
 #include "G4PSEnergyDeposit3D.hh"
 #include "G4PSTrackLength.hh"
 
+#include "G4tgbRotationMatrix.hh"
+
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 
@@ -128,7 +130,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4Material* Silicon = nistManager->FindOrBuildMaterial("G4_Si", fromIsotopes);
   //at STP
   G4Material* Xenon = nistManager->FindOrBuildMaterial("G4_Xe", fromIsotopes);
-  G4cout << "G4_Xenon pressure: " << Xenon->GetPressure() << G4endl;
+
   // Al for substract, Aluminum
   G4Material* Aluminum = nistManager->FindOrBuildMaterial("G4_Al", fromIsotopes);
 
@@ -137,15 +139,20 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
    new G4Material("Galactic", z=1., a=1.01*g/mole,density= universe_mean_density,
    kStateGas, 2.73*kelvin, 3.e-18*pascal);
    */
-  
-  // Cd for SETN container, Cadmium
-  G4Material* cadmium = nistManager->FindOrBuildMaterial("G4_Cd", fromIsotopes);
+  G4String symbol;
+  G4double a, z, density;
+
+
+  //Cadmium
+  G4Material* cadmium = nistManager->FindOrBuildMaterial("G4_Cd", true);
+  G4Element* Cd113 = new G4Element("Cadmium113",symbol="Cd113", z= 48., a =112.904*g/mole);
+  G4Material* cadmium113 = new G4Material("Cadmium113", density=8.7*g/cm3, ncomponents=1, kStateSolid);
+  cadmium113->AddElement(Cd113, 1);
   
   // BC545 Materials
   // Natural Boron-loaded Premium Plastic Scintillator
   // 5% Boronncomponents=
-  G4String symbol;
-  G4double a, z, density;
+
   G4Element* C = new G4Element("Carbon", symbol="C", z=6., a= 12.01*g/mole);
   G4Element* H  = new G4Element("Hydrogen",symbol="H" , z= 1., a= 1.01*g/mole);
   G4Element* B10 = new G4Element("Boron10",symbol="B10", z= 5., a =10.01294*g/mole);
@@ -225,6 +232,31 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4double HDPE_y2 = Al_y;
   G4double HDPE_z = 40*mm;
 
+  //HDPE Subtraction Solid:
+  G4double Sub_x = 16*mm;
+  G4double Sub_y = Al_y + 2*mm;
+  G4double Sub_z = 16*mm;
+
+  //Cadmium Plate 1
+  G4double cad1_x = Al_x;
+  G4double cad1_y = 1*mm;
+  G4double cad1_z = HDPE_z;
+
+  //Cadmium Plate 2
+  G4double cad2_x = 1*mm;
+  G4double cad2_y = Al_y;
+  G4double cad2_z = HDPE_z;
+
+  //Cadmium HDPE 1
+  G4double cadHDPE1_x = HDPE_z;
+  G4double cadHDPE1_y = HDPE_y1 + 2*cad2_x;
+  G4double cadHDPE1_z = HDPE_z;
+
+  //Cadmium HDPE 2
+  G4double cadHDPE2_x = HDPE_x1 + 2*cadHDPE1_x + 2*cad2_x;
+  G4double cadHDPE2_y = HDPE_z;
+  G4double cadHDPE2_z = HDPE_z;
+
   //SOLIDS:
   G4VSolid* XenonSolid = new G4Box("XenonGas", Xenon_x/ 2, Xenon_y/2, Xenon_z/2);
   G4VSolid* AlSubstrateSolid = new G4Box("AlSubstrate", Al_x/ 2, Al_y/2, Al_z/2);
@@ -232,7 +264,20 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4VSolid* SiPMSolid = new G4Box("SiPM", SiPM_x/2, SiPM_y/2, SiPM_z/2);
 
   G4VSolid* HDPESolid = new G4Box("HDPE", HDPE_x1/2, HDPE_y1/2, HDPE_z/2);
+  G4VSolid* HDPESubtraction = new G4Box("HDPE_Sub", Sub_x/2, Sub_y/2, Sub_z/2);
+
+  G4RotationMatrix* rotMat = new G4RotationMatrix();
+  rotMat->rotateY(3.1415926535/4);
+
+  G4VSolid* Attachment = new G4SubtractionSolid("Attachment", HDPESolid, HDPESubtraction, rotMat, G4ThreeVector(0, 0, HDPE_z/2));
   //G4VSolid* HDPESolid = new G4Trd("HDPE", HDPE_x1/2, HDPE_x2/2, HDPE_y1/2, HDPE_y2/2, HDPE_z/2);
+
+  G4VSolid* Cad1Solid = new G4Box("Cad1", cad1_x/2 + cad1_y, cad1_y/2, cad1_z/2);
+  G4VSolid* Cad2Solid = new G4Box("Cad2", cad2_x/2, cad2_y/2, cad2_z/2);
+
+  G4VSolid* cadHDPE1Solid = new G4Box("cadHDPE1", cadHDPE1_x/2, cadHDPE1_y/2, cadHDPE1_z/2);
+  G4VSolid* cadHDPE2Solid = new G4Box("cadHDPE2", cadHDPE2_x/2, cadHDPE2_y/2, cadHDPE2_z/2);
+
 
   //LOGICAL VOLUMES:
   G4LogicalVolume* XenonLogical = new G4LogicalVolume(XenonSolid, Xenon, "XenonGas");
@@ -241,6 +286,12 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4LogicalVolume* SiPMLogical = new G4LogicalVolume(SiPMSolid, Silicon, "SiPM");
 
   G4LogicalVolume* HDPELogical = new G4LogicalVolume(HDPESolid, polyethylene, "HDPE");
+
+  G4LogicalVolume* Cad1Logical = new G4LogicalVolume(Cad1Solid, cadmium113, "Cad1");
+  G4LogicalVolume* Cad2Logical = new G4LogicalVolume(Cad2Solid, cadmium113, "Cad2");
+
+  G4LogicalVolume* cadHDPE1Logical = new G4LogicalVolume(cadHDPE1Solid, polyethylene, "cadHDPE1");
+  G4LogicalVolume* cadHDPE2Logical = new G4LogicalVolume(cadHDPE2Solid, polyethylene, "cadHDPE2");
 
   //Place volumes in the world:
   new G4PVPlacement(0, G4ThreeVector(), XenonLogical, "XenonGas", World, false, 0);
@@ -262,6 +313,17 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
   new G4PVPlacement(0, G4ThreeVector(0, 0, Xenon_z/2 + Al_z + Boron_z + HDPE_z/2), HDPELogical, "HDPE", World, false, 0);
 
+  new G4PVPlacement(0, G4ThreeVector(0, HDPE_y1/2 + cad1_y/2, Xenon_z/2 + Al_z + Boron_z + HDPE_z/2), Cad1Logical, "Cad1_top", World, false, 0);
+  new G4PVPlacement(0, G4ThreeVector(0, -HDPE_y1/2 - cad1_y/2, Xenon_z/2 + Al_z + Boron_z + HDPE_z/2), Cad1Logical, "Cad1_bot", World, false, 1);
+
+  new G4PVPlacement(0, G4ThreeVector(HDPE_x1/2 + cad2_x/2, 0, Xenon_z/2 + Al_z + Boron_z + HDPE_z/2), Cad2Logical, "Cad2_right", World, false, 0);
+  new G4PVPlacement(0, G4ThreeVector(-HDPE_x1/2 - cad2_x/2, 0, Xenon_z/2 + Al_z + Boron_z + HDPE_z/2), Cad2Logical, "Cad2_left", World, false, 1);
+
+  new G4PVPlacement(0, G4ThreeVector(HDPE_x1/2 + cad2_x + cadHDPE1_x/2, 0, Xenon_z/2 + Al_z + Boron_z + HDPE_z/2), cadHDPE1Logical, "cadHDPE1_right", World, false, 0);
+  new G4PVPlacement(0, G4ThreeVector(-HDPE_x1/2 - cad2_x - cadHDPE1_x/2, 0, Xenon_z/2 + Al_z + Boron_z + HDPE_z/2), cadHDPE1Logical, "cadHDPE1_left", World, false, 1);
+  
+  new G4PVPlacement(0, G4ThreeVector(0, -HDPE_y1/2 - cad1_y - cadHDPE2_y/2, Xenon_z/2 + Al_z + Boron_z + HDPE_z/2), cadHDPE2Logical, "cadHDPE2_right", World, false, 0);
+  new G4PVPlacement(0, G4ThreeVector(0, HDPE_y1/2 + cad1_y + cadHDPE2_y/2, Xenon_z/2 + Al_z + Boron_z + HDPE_z/2), cadHDPE2Logical, "cadHDPE2_top", World, false, 1);
   //
   // Visualization attributes
   //
@@ -280,7 +342,8 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   XenonLogical->SetVisAttributes (greenBoxVisAtt);
   SiPMLogical->SetVisAttributes (yellowBoxVisAtt);
   HDPELogical->SetVisAttributes (whiteBoxVisAtt);
-
+  Cad1Logical->SetVisAttributes (blueBoxVisAtt);
+  Cad2Logical->SetVisAttributes (blueBoxVisAtt);
   //
   // Always return the physical World
   //
