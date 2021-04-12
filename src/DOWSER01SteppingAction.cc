@@ -62,7 +62,7 @@ fEnergy(0.),
 kEnergy(0),
 nEnergy(0),
 theta(0), phi(0),px(0),py(0),pz(0),x0(0), y0(0), z0(0), x1(0), y1(0), z1(0), nx0(0), ny0(0), nx1(0), ny1(0),
-ntheta(0), theta0(0), theta1(0), fParticleName(), fParticleNameOld(), numOfCapture(0)
+ntheta(0), theta0(0), theta1(0), fParticleName(), fParticleNameOld(), numOfCapture(0), Li_x1(0)
 {
     fgInstance = this;
 }
@@ -107,14 +107,66 @@ void DOWSER01SteppingAction::UserSteppingAction(const G4Step* step)
     //G4cout << "launched " << fParticleName << " w/ energy: " << kEnergy << G4endl;
     //G4cout << "in logical volume: " << nameLogicVolume << G4endl;
 
-    if ((fParticleName == "Li7") && ((nameLogicVolume == "BoronFilm")))
+    if (fParticleName == "Li7")
     {
+      if (nameLogicVolume == "Detector1")
+      {
+        Li_x1 = step->GetPreStepPoint()->GetPosition().z()/CLHEP::mm;
+
+        analysisManager->FillH1(5, theta0-90);
+        analysisManager->FillH1(7, Li_x1);
+        analysisManager->FillH2(3, theta0-90, Li_x1);
+
+        if (0 < Li_x1 && Li_x1 < 50)
+        {
+          analysisManager->FillH1(8, theta0-90);
+        }
+        if (50 <= Li_x1 && Li_x1 < 100)
+        {
+          analysisManager->FillH1(10, theta0-90);
+        }
+        if (100 <= Li_x1 && Li_x1 < 150)
+        {
+          analysisManager->FillH1(12, theta0-90);
+        }
+        if (150 <= Li_x1 && Li_x1 < 200)
+        {
+          analysisManager->FillH1(14, theta0-90);
+        }
+
+      } 
+      else if (nameLogicVolume == "Detector2")
+      {
+        Li_x1 = step->GetPreStepPoint()->GetPosition().z()/CLHEP::mm;
+
+        analysisManager->FillH1(6, theta0-90);
+        analysisManager->FillH1(7, Li_x1);
+        analysisManager->FillH2(3, theta0-90, Li_x1);
+
+        if (0 < Li_x1 && Li_x1 < 50)
+        {
+          analysisManager->FillH1(9, theta0-90);
+        }
+        if (50 <= Li_x1 && Li_x1 < 100)
+        {
+          analysisManager->FillH1(11, theta0-90);
+        }
+        if (100 <= Li_x1 && Li_x1 < 150)
+        {
+          analysisManager->FillH1(13, theta0-90);
+        }
+        if (150 <= Li_x1 && Li_x1 < 200)
+        {
+          analysisManager->FillH1(15, theta0-90);
+        }
+      }
+
       numOfCapture += 1;
       G4cout << "New B-10 capture event, total is: " << numOfCapture << G4endl;
 
       theta0 = info->GetTheta0();
       phi = info->GetTheta1();
-      analysisManager->FillH1(3, theta0);
+      analysisManager->FillH1(3, theta0 - 90);
       analysisManager->FillH1(4, phi);
     }
 
@@ -124,29 +176,27 @@ void DOWSER01SteppingAction::UserSteppingAction(const G4Step* step)
     }
   } 
 
-  if (fParticleName == "alpha" ||  fParticleName == "Li7")
-  {
-    if (fParticleName == "alpha")
-    {
-      //G4cout << "Alpha logical volume: " << nameLogicVolume << G4endl;
-    }
-    if (fParticleName == "Li7")
-    {
-      //G4cout << "Li7 logical volume: " << nameLogicVolume << G4endl;
-    }
-  }  
-
-  if (nameLogicVolume == "AlSubstrate" && fParticleName == "neutron")
+  if (nameLogicVolume == "Detector1" && fParticleName == "neutron")
   {
     G4double stepEnergy = step->GetPostStepPoint()->GetKineticEnergy()/CLHEP::eV;
-    //G4cout << "HDPE nENergy: " << stepEnergy << G4endl;
+
     if (stepEnergy != 0)
     {
         analysisManager->FillH1(2, stepEnergy);
-        analysisManager->FillH2(1, theta0, stepEnergy);
+        analysisManager->FillH2(1, theta0-90, stepEnergy);
     }
   }
 
+  if (nameLogicVolume == "Detector2" && fParticleName == "neutron")
+  {
+    G4double stepEnergy = step->GetPostStepPoint()->GetKineticEnergy()/CLHEP::eV;
+
+    if (stepEnergy != 0)
+    {
+        analysisManager->FillH1(2, stepEnergy);
+        analysisManager->FillH2(2, theta0 - 90, stepEnergy);
+    }
+  }
 
   if (fParticleName == "alpha" || fParticleName == "Li7")
   {

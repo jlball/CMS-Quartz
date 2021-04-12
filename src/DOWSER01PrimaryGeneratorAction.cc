@@ -157,8 +157,7 @@ void DOWSER01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // from G4LogicalVolumeStore
   //
   G4double worldZHalfLength = 0;
-  G4LogicalVolume* worlLV
-  = G4LogicalVolumeStore::GetInstance()->GetVolume("World");
+  G4LogicalVolume* worlLV = G4LogicalVolumeStore::GetInstance()->GetVolume("World");
   G4Box* worldBox = 0;
   if ( worlLV) worldBox = dynamic_cast< G4Box*>(worlLV->GetSolid());
   if ( worldBox ) {
@@ -181,22 +180,22 @@ void DOWSER01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   // begining of energy assigment
   
-  
+  //Set neutron energy
   Eneutron = 2.45;
   
-
   fParticleGun->SetParticleEnergy(Eneutron*MeV);
   analysisManager->FillH1(1, std::log10(Eneutron));
   info->SetEnergyN(Eneutron);
   
+  //
   Al_z = 0.8 *mm;
   Xe_z = 7 *mm;
   HDPE_z = 40*mm;
 
-  sourceRadius = 10.5*HDPE_z;  //+ Xe_z/2 + Al_z ;
+  sourceRadius = 60*cm;  //+ Xe_z/2 + Al_z ;
 
   //Randomly generate rotation angle
-  rotationAngle = pi * G4UniformRand();
+  rotationAngle = pi * G4UniformRand() + pi/2;
 
   //calculate cartesian coordinates for neutron origin
   x1 = sourceRadius * sin(rotationAngle); //-1.25 + 2.5 * G4UniformRand();
@@ -204,9 +203,13 @@ void DOWSER01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   z1 = sourceRadius * cos(rotationAngle) + Xe_z/2 + Al_z + HDPE_z/2;
 
   //Randonly generate spherical angle for momentum in specified range
-  spread_angle = 3.5 * pi/180;
-  theta = 0;//2*pi*G4UniformRand();
-  phi = 0; //-spread_angle + 2*spread_angle*G4UniformRand();
+  spread_angle = 6 * pi/180;
+  G4double max_V = (cos(spread_angle) + 1)/2;
+
+  G4double U = G4UniformRand();
+  G4double V = G4UniformRand() * (1 - max_V);
+  theta = 2*pi*U;
+  phi = acos(2*(1 - V) - 1) ; //-spread_angle + 2*spread_angle*G4UniformRand();
 
   //generate cartesian coordinates for momentum
   px0 = sin(phi)*cos(theta);
