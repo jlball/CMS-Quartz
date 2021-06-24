@@ -100,33 +100,33 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   // nistManager->FindOrBuildMaterial("G4_Pb", fromIsotopes);
   nistManager->FindOrBuildMaterial("G4_Galactic", fromIsotopes);
   G4Material* vacuum  = G4Material::GetMaterial("G4_Galactic");
-  
+
 
   // Al for substract, Aluminum
   G4Material* Aluminum = nistManager->FindOrBuildMaterial("G4_Al", fromIsotopes);
 
-  
+
   // Print materials
   G4cout << G4endl << "The materials defined are: " << G4endl << G4endl;
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
   G4cout << "************  end of material table  ************" << G4endl;
-  
+
   //============================================================================
   //      Definitions of Solids, Logical Volumes, Physical Volumes
   //============================================================================
-  
+
   //-------------
   // World Volume
   //-------------
   G4RotationMatrix* rot = new G4RotationMatrix();
   rot->rotateZ(0.*deg);
-  
+
   G4ThreeVector worldSize = G4ThreeVector(150*cm, 150*cm, 150*cm);
   G4Box * solidWorld
   = new G4Box("soildWorld", worldSize.x()/2., worldSize.y()/2., worldSize.z()/2.);
   G4LogicalVolume * World
   = new G4LogicalVolume(solidWorld, vacuum, "World", 0, 0, 0);
-  
+
   //
   //  Must place the World Physical volume unrotated at (0,0,0).
   G4VPhysicalVolume * worldPV
@@ -141,13 +141,14 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
   //SOLIDS:
   G4VSolid* XenonSolid = new G4Box("XenonGas", 50*mm/ 2, 50*mm/2, 50*mm/2);
+  G4VSolid* QUartzSolid = new G4Box("Hello". 10*mm, 10*mm, 10*mm);
 
 
   //LOGICAL VOLUMES:
   G4LogicalVolume* XenonLogical = new G4LogicalVolume(XenonSolid, Aluminum, "XenonGas");
 
 
-  
+
 
   //Place volumes in the world:
   new G4PVPlacement(0, G4ThreeVector(0, 0, 0), XenonLogical, "Xenon", World, false, 0);
