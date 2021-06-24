@@ -79,53 +79,8 @@ fParticleGun(0)
   std::ifstream theData("LNeutronIntSpectrum.DAT", std::ios::in);
   G4cout << "Open Neutron Spectrum Data " << G4endl;
   
-  if(!theData)
-  {
-    theData.close();
-    G4cout << "LNeutronIntSpectrum.DAT does not exit! " << G4endl;
-    G4double dElog10 = (Emax - Emin)/fnArray;
-    for (G4int copyNo=0; copyNo<fnArray; copyNo++)
-    {
-      nEnergy[copyNo]=pow(10,Emin + copyNo * dElog10);
-      intSpectrum[copyNo] = pow(nEnergy[copyNo],-0.89)
-      *(pow(10,Emin + (copyNo+0.5) * dElog10)-pow(10,Emin + (copyNo-0.5) * dElog10));
-      nEnergyT += intSpectrum[copyNo];
-      intSpectrum[copyNo] = nEnergyT;
-    }
-    intSpectrum[0] = 0;
-    for (G4int copyNo=0; copyNo<fnArray; copyNo++)
-    {
-      intSpectrum[copyNo] /=  nEnergyT;
-    }
-    
-  } else
-  {
-    for (G4int copyNo=0; copyNo<fnArray; copyNo++)
-    {
-      if (!theData.eof())
-      {
-        theData >> nEnergy[copyNo] >> intSpectrum[copyNo]  ;
-      }
-    }
-  }
-  theData.close();
   
-  // Lunar neutron angular distribution, LEND's View
-  fEnergyT = 0;
-  for (G4int copyNo = 0; copyNo < fAngleArray; copyNo++)
-  {
-    // nFluxHEE[copyNo] = cos(0.5*copyNo*pi/fAngleArray)*std::sqrt(cos(0.5*copyNo*pi/fAngleArray))*sin(0.5*copyNo*pi/fAngleArray);
-    nFluxHEE[copyNo] = std::pow(cos(0.5*copyNo*pi/fAngleArray), 3./2.)*sin(0.5*copyNo*pi/fAngleArray);
-    nThetaHEE[copyNo] = copyNo*90./fAngleArray;
-    fEnergyT += nFluxHEE[copyNo];
-    nFluxHEE[copyNo] = fEnergyT;
-  }
-  
-  for (G4int copyNo = 0; copyNo < fAngleArray; copyNo++)
-  {
-    nFluxHEE[copyNo] /=  fEnergyT;
-  }
-  
+
   
   G4ParticleDefinition* particleDefinition
   = G4ParticleTable::GetParticleTable()->FindParticle("neutron");
@@ -147,8 +102,7 @@ DOWSER01PrimaryGeneratorAction::~DOWSER01PrimaryGeneratorAction()
 void DOWSER01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   // This function is called at the begining of event
-  G4double Eneutron(0), x0(0), y0(0), z0(0), px0(0), py0(0), pz0(0), px1(0), pz1(0), rotationAngle(0), theta(0), phi(0), x1(0), y1(0), 
-  z1(0), Al_z(0), Xe_z(0), sourceRadius(0), HDPE_z(0), spread(0), spread_angle(0);
+  G4double Eneutron(0);
   G4int copyNo(0), iflag(0);
   G4double xx(0), yy(0), zz(0), pPhiH(0), pVerH(0), xDiff(0), yDiff(0), zDiff(0);
   // G4double xx(0), yy(0), zz(0), pPhiH(0), pVerH(0);
@@ -187,51 +141,16 @@ void DOWSER01PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   analysisManager->FillH1(1, std::log10(Eneutron));
   info->SetEnergyN(Eneutron);
   
-  //
-  Al_z = 0.8 *mm;
-  Xe_z = 7 *mm;
-  HDPE_z = 40*mm;
+  G4double x0 = 1.0*m;
+  G4double y0 = 0*m;
+  G4double z0 = 0*m;
 
-  sourceRadius = 60*cm;  //+ Xe_z/2 + Al_z ;
-
-  //Randomly generate rotation angle
-  rotationAngle = pi * G4UniformRand() + pi/2;
-
-  //calculate cartesian coordinates for neutron origin
-  x1 = sourceRadius * sin(rotationAngle); //-1.25 + 2.5 * G4UniformRand();
-  y1 = 0; //-1.25 + 2.5 * G4UniformRand();
-  z1 = sourceRadius * cos(rotationAngle) + Xe_z/2 + Al_z + HDPE_z/2;
-
-  //Randonly generate spherical angle for momentum in specified range
-  spread_angle = 6 * pi/180;
-  G4double max_V = (cos(spread_angle) + 1)/2;
-
-  G4double U = G4UniformRand();
-  G4double V = G4UniformRand() * (1 - max_V);
-  theta = 2*pi*U;
-  phi = acos(2*(1 - V) - 1) ; //-spread_angle + 2*spread_angle*G4UniformRand();
-
-  //generate cartesian coordinates for momentum
-  px0 = sin(phi)*cos(theta);
-  py0 = sin(phi)*sin(theta);
-  pz0 = -cos(phi);
-
-  //Rotate momentum vector about y axis through angle rotationAngle
-  px1 = px0*cos(-rotationAngle) - pz0*sin(-rotationAngle);
-  pz1 = px0*sin(-rotationAngle) + pz0*cos(-rotationAngle);
-
-  //x0 = 12;
-  //y0 = -10 + 20 * G4UniformRand();
-  //z0 = -10 + 20 * G4UniformRand();
-
-  xDiff = (cos(rotationAngle)) - x1;
-  yDiff =  - y1;
-  zDiff = (sin(rotationAngle)) - z1;
-
-  fParticleGun->SetParticlePosition(G4ThreeVector(x1, y1, z1));
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px1,py0,pz1));
-  info->SetTheta0(rotationAngle*180.0/pi);
-  info->SetTheta1(phi*180.0/pi);
+  G4double px0 = -1*m;
+  G4double py0 = 0*m;
+  G4double pz0 = 0*m;
+ 
+  fParticleGun->SetParticlePosition(G4ThreeVector(x0, y0, z0));
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px0,py0,pz0));
   //analysisManager->FillH1(2, rotationAngle*180.0/pi);
   fParticleGun->GeneratePrimaryVertex(anEvent);
   anEvent->SetUserInformation(info);
