@@ -33,8 +33,8 @@
 #include "G4NistManager.hh"
 #include "G4Isotope.hh"
 #include "G4Element.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
+#include "G4Tubss.hh"
 #include "G4Cons.hh"
 #include "G4Ellipsoid.hh"
 #include "G4Para.hh"
@@ -122,8 +122,8 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   rot->rotateZ(0.*deg);
 
   G4ThreeVector worldSize = G4ThreeVector(150*cm, 150*cm, 150*cm);
-  G4Box * solidWorld
-  = new G4Box("soildWorld", worldSize.x()/2., worldSize.y()/2., worldSize.z()/2.);
+  G4Tubs * solidWorld
+  = new G4Tubs("soildWorld", worldSize.x()/2., worldSize.y()/2., worldSize.z()/2.);
   G4LogicalVolume * World
   = new G4LogicalVolume(solidWorld, vacuum, "World", 0, 0, 0);
 
@@ -141,18 +141,35 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
   //SOLIDS:
   G4VSolid* XenonSolid = new G4Box("XenonGas", 50*mm/ 2, 50*mm/2, 50*mm/2);
-  G4VSolid* QUartzSolid = new G4Box("Hello". 10*mm, 10*mm, 10*mm);
+
+  G4VSolid* QUartzSolid 
+  = new G4Tubs("GE214Quartz". 
+                0*mm, // Inner radius
+                100*mm, // Outer radius
+                100*mm, // Half length Z (hz)
+                0.*deg, // start angle
+                360.*deg); // spanningAngle
 
 
   //LOGICAL VOLUMES:
   G4LogicalVolume* XenonLogical = new G4LogicalVolume(XenonSolid, Aluminum, "XenonGas");
 
+  G4LogicalVolume* QuartzLogical = new G4LogicalVolume(QuartzSolid, GE214Quartz, "GE214Quartz");
 
 
 
   //Place volumes in the world:
   new G4PVPlacement(0, G4ThreeVector(0, 0, 0), XenonLogical, "Xenon", World, false, 0);
 
+  new G4PVPlacement(0,                       // no rotation (?)
+                    G4ThreeVector(0, 0, 0),  // translation position
+                    GE214Quartz,             // logical volume
+                    "GE214Quartz",           // volume name
+                    World,                   // mother volume
+                    false,                   // boolean operations (none)
+                    0);                      // its copy number
+
+  new G4VPlacement()
   //
   // Visualization attributes
   //
