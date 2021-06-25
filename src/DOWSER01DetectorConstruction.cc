@@ -212,7 +212,11 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
   //SOLIDS:
   G4VSolid* XenonSolid = new G4Box("XenonGas", 50*mm/ 2, 50*mm/2, 50*mm/2);
+<<<<<<< HEAD
   G4VSolid* QuartzSolid = new G4Box("Hello". 10*mm, 10*mm, 10*mm);
+=======
+  G4VSolid* QUartzSolid = new G4Box("Hello", 10*mm, 10*mm, 10*mm);
+>>>>>>> b14c6b52a5feb4084c2becfccaa2f79c6425fc48
 
 
   //LOGICAL VOLUMES:
