@@ -111,6 +111,77 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4cout << *(G4Material::GetMaterialTable()) << G4endl;
   G4cout << "************  end of material table  ************" << G4endl;
 
+  //-------- Custom Materials ----------------------------------------------------
+  G4double z, a, fractionmass, density;
+  G4String name, symbol;
+  G4int ncomponents;
+
+  // Call elements from GEANT4 database
+  G4NistManager* man = G4NistManager::Instance();
+  G4Element* Al = man->FindOrBuildElement("G4_Al");
+  G4Element* As = man->FindOrBuildElement("G4_As");
+  G4Element* B = man->FindOrBuildElement("G4_B");
+  G4Element* Ca = man->FindOrBuildElement("G4_Ca");
+  G4Element* Cd = man->FindOrBuildElement("G4_Cd");
+  G4Element* Cr = man->FindOrBuildElement("G4_Cr");
+  G4Element* Cu = man->FindOrBuildElement("G4_Cu");
+  G4Element* Fe = man->FindOrBuildElement("G4_Fe");
+  G4Element* K = man->FindOrBuildElement("G4_K");
+  G4Element* Li = man->FindOrBuildElement("G4_Li");
+  G4Element* Mg = man->FindOrBuildElement("G4_Mg");
+  G4Element* Na = man->FindOrBuildElement("G4_Na");
+  G4Element* Ni = man->FindOrBuildElement("G4_Ni");
+  G4Element* P = man->FindOrBuildElement("G4_P");
+  G4Element* Sb = man->FindOrBuildElement("G4_Sb");
+  G4Element* Ti = man->FindOrBuildElement("G4_Ti");
+  G4Element* Zr = man->FindOrBuildElement("G4_Zr");
+  G4Element* O = man->FindOrBuildElement("G4_O");
+  G4Element* H = man->FindOrBuildElement("G4_H");
+  G4Element* Si = man->FindOrBuildElement("G4_Si");
+
+
+  // Creating hydroxyl
+  G4double z, a, density;
+  G4String name, symbol;
+  G4int ncomponents, natoms;
+  density = 1.000*g/cm3;
+  G4Material* OH = new G4Material(name="OH",density,ncomponents=2);
+  OH->AddElement(H, natoms=1);
+  OH->AddElement(O, natoms=1);
+
+  // Creating SiO2
+  G4double z, a, density;
+  G4String name, symbol;
+  G4int ncomponents, natoms;
+  density = 2.65*g/cm3;
+  G4Material* SiO2 = new G4Material(name="SiO2",density,ncomponents=2);
+  SiO2->AddElement(Si, natoms=1);
+  SiO2->AddElement(O, natoms=2);
+
+  // Creating Fused Quartz
+  density = 2200 kg/m3;
+  G4Material* ge214quartz = new G4Material(name="ge214quartz",density,ncomponents=20);
+  ge214quartz->AddMaterial(SiO2, fractionmass=99.97955197*perCent);
+  ge214quartz->AddElement(Al, fractionmass=0.014*perCent);
+  ge214quartz->AddElement(As, fractionmass=0.000002*perCent);
+  ge214quartz->AddElement(B, fractionmass=0.00002*perCent);
+  ge214quartz->AddElement(Ca, fractionmass=0.00004*perCent);
+  ge214quartz->AddElement(Cd, fractionmass=0.000001*perCent);
+  ge214quartz->AddElement(Cr, fractionmass=0.000005*perCent);
+  ge214quartz->AddElement(Cu, fractionmass=0.000005*perCent);
+  ge214quartz->AddElement(Fe, fractionmass=0.00002*perCent);
+  ge214quartz->AddElement(K, fractionmass=0.00006*perCent);
+  ge214quartz->AddElement(Li, fractionmass=0.00006*perCent);
+  ge214quartz->AddElement(Mg, fractionmass=0.00001*perCent);
+  ge214quartz->AddElement(Mn, fractionmass=0.000005*perCent);
+  ge214quartz->AddElement(Na, fractionmass=0.00007*perCent);
+  ge214quartz->AddElement(Ni, fractionmass=0.00001*perCent);
+  ge214quartz->AddElement(P, fractionmass=0.00002*perCent);
+  ge214quartz->AddElement(Sb, fractionmass=0.00000003*perCent);
+  ge214quartz->AddElement(Ti, fractionmass=0.0011*perCent);
+  ge214quartz->AddElement(Zr, fractionmass=0.00008*perCent);
+  ge214quartz->AddMaterial(OH, fractionmass=0.005*perCent);
+
   //============================================================================
   //      Definitions of Solids, Logical Volumes, Physical Volumes
   //============================================================================
@@ -141,7 +212,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
   //SOLIDS:
   G4VSolid* XenonSolid = new G4Box("XenonGas", 50*mm/ 2, 50*mm/2, 50*mm/2);
-  G4VSolid* QUartzSolid = new G4Box("Hello". 10*mm, 10*mm, 10*mm);
+  G4VSolid* QuartzSolid = new G4Box("Hello". 10*mm, 10*mm, 10*mm);
 
 
   //LOGICAL VOLUMES:
