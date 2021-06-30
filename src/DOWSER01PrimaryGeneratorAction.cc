@@ -86,7 +86,7 @@ fParticleGun(0)
   = G4ParticleTable::GetParticleTable()->FindParticle("electron");
   fParticleGun->SetParticleDefinition(particleDefinition);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
-  fParticleGun->SetParticleEnergy(0.001032720*eV);
+  fParticleGun->SetParticleEnergy(5.0*MeV);
 
 }
 

@@ -160,7 +160,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
   // Creating Fused Quartz
   density = 2200 kg/m3;
-  G4Material* ge214quartz = new G4Material(name="ge214quartz",density,ncomponents=20);
+  G4Material* GE214quartz = new G4Material(name="GE214quartz",density,ncomponents=20);
   ge214quartz->AddMaterial(SiO2, fractionmass=99.97955197*perCent);
   ge214quartz->AddElement(Al, fractionmass=0.014*perCent);
   ge214quartz->AddElement(As, fractionmass=0.000002*perCent);
@@ -242,7 +242,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
   new G4PVPlacement(0,                       // no rotation (?)
                     G4ThreeVector(0, 0, 0),  // translation position
-                    GE214Quartz,             // logical volume
+                    QuartzLogical,             // logical volume
                     "GE214Quartz",           // volume name
                     World,                   // mother volume
                     false,                   // boolean operations (none)
