@@ -235,7 +235,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
   new G4PVPlacement(0,                       // no rotation (?)
                     G4ThreeVector(0, 0, 0),  // translation position
-                    QuartzLogical,             // logical volume
+                    QuartzLogical,           // logical volume
                     "GE214Quartz",           // volume name
                     World,                   // mother volume
                     false,                   // boolean operations (none)
@@ -255,7 +255,6 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4VisAttributes* lightblueVisAtt= new G4VisAttributes(G4Colour(0.0,0.0,0.5,0.15));
   G4VisAttributes* grayVisAtt= new G4VisAttributes(G4Colour(0.3,0.3,0.3,0.1));
 
-  XenonLogical->SetVisAttributes (redBoxVisAtt);
   QuartzLogical->SetVisAttributes (greenBoxisAtt);
   //
   // Always return the physical World
