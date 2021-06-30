@@ -130,7 +130,6 @@ G4VPhysicalVolume* OpNoviceDetectorConstruction::Construct()
               1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
               1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
               1.00, 1.00, 1.00, 1.00 };
-
   assert(sizeof(scintilFast) == sizeof(photonEnergy));
 
   G4double scintilSlow[] =
