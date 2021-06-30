@@ -211,8 +211,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
 
   //SOLIDS:
-  G4VSolid* XenonSolid = new G4Box("XenonGas", 50*mm/ 2, 50*mm/2, 50*mm/2);
-<<<<<<< HEAD
+
 
   G4VSolid* QUartzSolid 
   = new G4Tubs("GE214Quartz". 
@@ -221,24 +220,18 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
                 100*mm, // Half length Z (hz)
                 0.*deg, // start angle
                 360.*deg); // spanningAngle
-=======
-<<<<<<< HEAD
-  G4VSolid* QuartzSolid = new G4Box("Hello". 10*mm, 10*mm, 10*mm);
-=======
+
   G4VSolid* QUartzSolid = new G4Box("Hello", 10*mm, 10*mm, 10*mm);
->>>>>>> b14c6b52a5feb4084c2becfccaa2f79c6425fc48
->>>>>>> af6f21cb1ebc60b96af3bef96b531a099414845a
+
 
 
   //LOGICAL VOLUMES:
-  G4LogicalVolume* XenonLogical = new G4LogicalVolume(XenonSolid, Aluminum, "XenonGas");
 
   G4LogicalVolume* QuartzLogical = new G4LogicalVolume(QuartzSolid, GE214Quartz, "GE214Quartz");
 
 
 
   //Place volumes in the world:
-  new G4PVPlacement(0, G4ThreeVector(0, 0, 0), XenonLogical, "Xenon", World, false, 0);
 
   new G4PVPlacement(0,                       // no rotation (?)
                     G4ThreeVector(0, 0, 0),  // translation position
@@ -263,6 +256,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4VisAttributes* grayVisAtt= new G4VisAttributes(G4Colour(0.3,0.3,0.3,0.1));
 
   XenonLogical->SetVisAttributes (redBoxVisAtt);
+  QuartzLogical->SetVisAttributes (greenBoxisAtt);
   //
   // Always return the physical World
   //
