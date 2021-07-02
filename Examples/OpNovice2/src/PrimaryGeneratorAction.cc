@@ -57,13 +57,13 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   //default kinematic
   //
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleDefinition* particle = particleTable->FindParticle("e+");
+  G4ParticleDefinition* particle = particleTable->FindParticle("electron");
 
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleTime(0.0*ns);
-  fParticleGun->SetParticlePosition(G4ThreeVector(0.0*cm,0.0*cm,0.0*cm));
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(1.,0.,0.));
-  fParticleGun->SetParticleEnergy(500.0*keV);
+  fParticleGun->SetParticlePosition(G4ThreeVector(0.0*cm,0.0*cm,0.-6.0*cm));
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
+  fParticleGun->SetParticleEnergy(5.0*MeV);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -100,6 +100,7 @@ void PrimaryGeneratorAction::SetOptPhotonPolar(G4double angle)
      return;
    }
 
+// What's 'normal'? 
  G4ThreeVector normal (1., 0., 0.);
  G4ThreeVector kphoton = fParticleGun->GetParticleMomentumDirection();
  G4ThreeVector product = normal.cross(kphoton);
