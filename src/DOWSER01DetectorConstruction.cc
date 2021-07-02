@@ -139,6 +139,16 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4Element* H = man->FindOrBuildElement("G4_H");
   G4Element* Si = man->FindOrBuildElement("G4_Si");
 
+  G4Element* Cl = man->FindOrBuildElement("G4_Cl");
+  G4Element* Mn = man->FindOrBuildElement("G4_Mn");
+  G4Element* Ge = man->FindOrBuildElement("G4_Ge");
+  G4Element* La = man->FindOrBuildElement("G4_La");
+  G4Element* Sm = man->FindOrBuildElement("G4_Sm");
+  G4Element* Eu = man->FindOrBuildElement("G4_Eu");
+  G4Element* Dy = man->FindOrBuildElement("G4_Dy");
+  G4Element* Yb = man->FindOrBuildElement("G4_Yb");
+  G4Element* W = man->FindOrBuildElement("G4_W");
+  G4Element* U = man->FindOrBuildElement("G4_U");
 
   // Creating hydroxyl
   G4double z, a, density;
@@ -148,6 +158,13 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4Material* OH = new G4Material(name="OH",density,ncomponents=2);
   OH->AddElement(H, natoms=1);
   OH->AddElement(O, natoms=1);
+//  G4double z, a, density;
+//  G4String name, symbol;
+//  G4int ncomponents, natoms;
+//  density = 1.000*g/cm3;
+//  G4Material* OH = new G4Material(name="OH",density,ncomponents=2);
+//  OH->AddElement(H, natoms=1);
+//  OH->AddElement(O, natoms=1);
 
   // Creating SiO2
   G4double z, a, density;
@@ -162,6 +179,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   density = 2200 kg/m3;
   G4Material* GE214quartz = new G4Material(name="GE214quartz",density,ncomponents=20);
   ge214quartz->AddMaterial(SiO2, fractionmass=99.97955197*perCent);
+  ge214quartz->AddMaterial(SiO2, fractionmass=99.97862127*perCent);
   ge214quartz->AddElement(Al, fractionmass=0.014*perCent);
   ge214quartz->AddElement(As, fractionmass=0.000002*perCent);
   ge214quartz->AddElement(B, fractionmass=0.00002*perCent);
@@ -171,6 +189,8 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   ge214quartz->AddElement(Cu, fractionmass=0.000005*perCent);
   ge214quartz->AddElement(Fe, fractionmass=0.00002*perCent);
   ge214quartz->AddElement(K, fractionmass=0.00006*perCent);
+//  ge214quartz->AddElement(K, fractionmass=0.00006*perCent);
+  ge214quartz->AddMaterial(K, fractionmass=0.000586*perCent);
   ge214quartz->AddElement(Li, fractionmass=0.00006*perCent);
   ge214quartz->AddElement(Mg, fractionmass=0.00001*perCent);
   ge214quartz->AddElement(Mn, fractionmass=0.000005*perCent);
@@ -181,6 +201,17 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   ge214quartz->AddElement(Ti, fractionmass=0.0011*perCent);
   ge214quartz->AddElement(Zr, fractionmass=0.00008*perCent);
   ge214quartz->AddMaterial(OH, fractionmass=0.005*perCent);
+//  ge214quartz->AddMaterial(OH, fractionmass=0.005*perCent);
+  ge214quartz->AddMaterial(Cl, fractionmass=0.0002113*perCent);
+  ge214quartz->AddMaterial(Mn, fractionmass=0.0000194*perCent);
+  ge214quartz->AddMaterial(Ge, fractionmass=0.0000011*perCent);
+  ge214quartz->AddMaterial(La, fractionmass=0.0000158*perCent);
+  ge214quartz->AddMaterial(Sm, fractionmass=0.0000053*perCent);
+  ge214quartz->AddMaterial(Eu, fractionmass=0.0000008*perCent);
+  ge214quartz->AddMaterial(Dy, fractionmass=0.0000366*perCent);
+  ge214quartz->AddMaterial(Yb, fractionmass=0.0000125*perCent);
+  ge214quartz->AddMaterial(W, fractionmass=0.0000375*perCent);
+  ge214quartz->AddMaterial(U, fractionmass=0.0000644*perCent);
 
   //============================================================================
   //      Definitions of Solids, Logical Volumes, Physical Volumes
@@ -215,6 +246,8 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
   G4VSolid* QUartzSolid 
   = new G4Tubs("GE214Quartz". 
+  G4VSolid* QUartzSolid
+  = new G4Tubs("GE214Quartz".
                 0*mm, // Inner radius
                 100*mm, // Outer radius
                 100*mm, // Half length Z (hz)

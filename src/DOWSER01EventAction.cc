@@ -54,6 +54,8 @@ DOWSER01EventAction::DOWSER01EventAction()
     G4GenericMessenger::Command& setPrintModulo
     = fMessenger->DeclareProperty("setPrintModulo", 
                                   fPrintModulo, 
+    = fMessenger->DeclareProperty("setPrintModulo",
+                                  fPrintModulo,
                                  "Print events modulo n");
   setPrintModulo.SetRange("value>0");
     */
@@ -70,9 +72,11 @@ DOWSER01EventAction::~DOWSER01EventAction()
 
 void DOWSER01EventAction::BeginOfEventAction(const G4Event* event)
 {  
+{
 
   G4int eventID = event->GetEventID();
   if ( eventID % fPrintModulo == 0 )  { 
+  if ( eventID % fPrintModulo == 0 )  {
     G4cout << "\n---> Begin of event: " << eventID << G4endl;
     //CLHEP::HepRandom::showEngineStatus();
   }
@@ -83,13 +87,17 @@ void DOWSER01EventAction::BeginOfEventAction(const G4Event* event)
 void DOWSER01EventAction::EndOfEventAction(const G4Event* event)
 {  
  
+{
+
   G4int eventID = event->GetEventID();
 
   if ( eventID % fPrintModulo == 0) {
     G4cout << "---> End of event: " << eventID << G4endl;     
+    G4cout << "---> End of event: " << eventID << G4endl;
 
   }
 
 }  
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
