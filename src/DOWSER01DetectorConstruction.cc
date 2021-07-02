@@ -221,7 +221,7 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
                 0.*deg, // start angle
                 360.*deg); // spanningAngle
 
-  G4VSolid* QUartzSolid = new G4Box("Hello", 10*mm, 10*mm, 10*mm);
+  
 
 
 
