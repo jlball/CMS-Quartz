@@ -213,6 +213,13 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   ge214quartz->AddMaterial(W, fractionmass=0.0000375*perCent);
   ge214quartz->AddMaterial(U, fractionmass=0.0000644*perCent);
 
+
+
+  // Create Materials Property Table for Quartz
+  G4MaterialPropertiesTable *MPT = new G4MaterialPropertiesTable()
+  
+
+
   //============================================================================
   //      Definitions of Solids, Logical Volumes, Physical Volumes
   //============================================================================
@@ -249,8 +256,8 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
   G4VSolid* QUartzSolid
   = new G4Tubs("GE214Quartz".
                 0*mm, // Inner radius
-                100*mm, // Outer radius
-                100*mm, // Half length Z (hz)
+                10*mm, // Outer radius
+                10*mm, // Half length Z (hz)
                 0.*deg, // start angle
                 360.*deg); // spanningAngle
 
