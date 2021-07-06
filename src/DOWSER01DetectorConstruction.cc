@@ -215,9 +215,42 @@ G4VPhysicalVolume* DOWSER01DetectorConstruction::Construct()
 
 
 
-  // Create Materials Property Table for Quartz
-  G4MaterialPropertiesTable *MPT = new G4MaterialPropertiesTable()
+  // Create Material Properties Table for Quartz
   
+  G4double photonEnergy[] =
+            { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
+              2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
+              2.341*eV, 2.386*eV, 2.433*eV, 2.481*eV,
+              2.532*eV, 2.585*eV, 2.640*eV, 2.697*eV,
+              2.757*eV, 2.820*eV, 2.885*eV, 2.954*eV,
+              3.026*eV, 3.102*eV, 3.181*eV, 3.265*eV,
+              3.353*eV, 3.446*eV, 3.545*eV, 3.649*eV,
+              3.760*eV, 3.877*eV, 4.002*eV, 4.136*eV };  
+
+  const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
+
+// Add refractive indices corresponding to photon energies listed above. 
+// Taken from https://www.filmetrics.com/refractive-index-database/SiO2/Fused-Silica-Silica-Silicon-Dioxide-Thermal-Oxide-ThermalOxide
+  G4double refractiveIndex1[] =
+            { 1.4577, 1.4580, 1.4584, 1.4587, 
+              1.4591, 1.4595, 1.4599, 1.4603,
+              1.4608, 1.4613, 1.4618, 1.4623,
+              1.4629, 1.4635, 1.4641, 1.4648,
+              1.4656, 1.4663, 1.4672, 1.4681,
+              1.4691, 1.4701, 1.4713, 1.4725, 
+              1.4738, 1.4753, 1.4769, 1.4787,
+              1.4806, 1.4827, 1.4851, 1.4878 };
+
+  assert(sizeof(refractiveIndex1) == sizeof(photonEnergy));
+
+// Actually create the table
+  G4MaterialPropertiesTable *MPT = new G4MaterialPropertiesTable()
+  MPT->AddProperty("RINDEX", photonEnergy, refractiveIndex1,nEntries)
+        ->SetSpline(true);
+// Assign the table to the ge214 quartz material we created. 
+  ge214quartz->SetMaterialPropertiesTable(MPT)
+
+
 
 
   //============================================================================
